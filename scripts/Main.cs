@@ -27,7 +27,7 @@ public partial class Main : CanvasLayer {
 
 		#endregion Nodes
 
-		discordGDNode = (GodotObject)GD.Load<GDScript>("res://discord_rp.gd").New();
+		discordGDNode = (GodotObject)GD.Load<GDScript>("res://scripts/discord_rp.gd").New();
 
 		presetLabel.Text = "";
 	}

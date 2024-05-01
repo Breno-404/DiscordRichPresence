@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 DiscordRPCLoader="*res://addons/discord-rpc-gd/nodes/discord_autoload.gd"
+Save="*res://scripts/Save.cs"
 
 [display]
 

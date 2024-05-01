@@ -1,21 +1,20 @@
-[gd_scene load_steps=6 format=3 uid="uid://brliwa0k53iwr"]
+[gd_scene load_steps=9 format=3 uid="uid://brliwa0k53iwr"]
 
-[ext_resource type="Script" path="res://Main.cs" id="1_wofm6"]
+[ext_resource type="Script" path="res://scripts/Main.cs" id="1_wofm6"]
 [ext_resource type="Texture2D" uid="uid://ygbsxyd3nfdi" path="res://icon-Sheet.png" id="2_10n78"]
-[ext_resource type="StyleBox" uid="uid://2kmxoc371iln" path="res://new_style_box_empty.tres" id="3_qxpc6"]
 
-[sub_resource type="Theme" id="Theme_y43m7"]
-Button/styles/disabled = ExtResource("3_qxpc6")
-Button/styles/focus = ExtResource("3_qxpc6")
-Button/styles/hover = ExtResource("3_qxpc6")
-Button/styles/normal = ExtResource("3_qxpc6")
-Button/styles/pressed = ExtResource("3_qxpc6")
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_vyxan"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_uurhl"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_uyoi5"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_g2mce"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_yejgl"]
 
 [sub_resource type="GDScript" id="GDScript_uane3"]
 script/source = "extends Control
-
-var _save_script = load(\"res://Save.cs\")
-var _save_node = _save_script.new()
 
 @onready var app_id_input: LineEdit = $\"../AppIDInput\"
 @onready var details_input: TextEdit = $\"../DetailsInput\"
@@ -53,11 +52,11 @@ func _button_up(button : Button):
 	}
 	
 	if mode == \"SaveButton\":
-		_save_node.SaveData(data, n)
+		Save.SaveData(data, n)
 		label.text = \"Preset Saved!\"
 		
 	if mode == \"LoadButton\":
-		var new_data : Dictionary = _save_node.LoadData(n)
+		var new_data : Dictionary = Save.LoadData(n)
 		
 		if !new_data.is_empty():
 			app_id_input.text = new_data[\"APP_ID\"]
@@ -95,7 +94,11 @@ offset_left = -198.0
 offset_top = -198.0
 offset_right = 198.0
 offset_bottom = 198.0
-theme = SubResource("Theme_y43m7")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_vyxan")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_uurhl")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_uyoi5")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_g2mce")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_yejgl")
 
 [node name="StartButton" type="Button" parent="."]
 offset_left = 507.0
@@ -414,6 +417,12 @@ offset_top = 607.0
 offset_right = 616.0
 offset_bottom = 630.0
 text = "By Alef"
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
 
 [connection signal="button_down" from="Icon/Button" to="." method="_on_button_button_down"]
 [connection signal="button_up" from="Icon/Button" to="." method="_on_button_button_up"]
