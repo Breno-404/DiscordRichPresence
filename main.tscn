@@ -1,0 +1,424 @@
+[gd_scene load_steps=6 format=3 uid="uid://brliwa0k53iwr"]
+
+[ext_resource type="Script" path="res://Main.cs" id="1_wofm6"]
+[ext_resource type="Texture2D" uid="uid://ygbsxyd3nfdi" path="res://icon-Sheet.png" id="2_10n78"]
+[ext_resource type="StyleBox" uid="uid://2kmxoc371iln" path="res://new_style_box_empty.tres" id="3_qxpc6"]
+
+[sub_resource type="Theme" id="Theme_y43m7"]
+Button/styles/disabled = ExtResource("3_qxpc6")
+Button/styles/focus = ExtResource("3_qxpc6")
+Button/styles/hover = ExtResource("3_qxpc6")
+Button/styles/normal = ExtResource("3_qxpc6")
+Button/styles/pressed = ExtResource("3_qxpc6")
+
+[sub_resource type="GDScript" id="GDScript_uane3"]
+script/source = "extends Control
+
+var _save_script = load(\"res://Save.cs\")
+var _save_node = _save_script.new()
+
+@onready var app_id_input: LineEdit = $\"../AppIDInput\"
+@onready var details_input: TextEdit = $\"../DetailsInput\"
+@onready var state_input: LineEdit = $\"../StateInput\"
+@onready var large_image_input: LineEdit = $\"../LargeImageInput\"
+@onready var large_image_text_input: LineEdit = $\"../LargeImageTextInput\"
+@onready var small_image_input: LineEdit = $\"../SmallImageInput\"
+@onready var small_image_text_input: LineEdit = $\"../SmallImageTextInput\"
+@onready var remaining_time_input: LineEdit = $\"../RemainingTimeInput\"
+@onready var elapsed_time_input: LineEdit = $\"../ElapsedTimeInput\"
+@onready var label: Label = $\"../Label\"
+@onready var time_check_box: CheckBox = $\"../TimeCheckBox\"
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	for node in get_children():
+		node.connect(\"button_up\", _button_up.bind(node))
+
+func _button_up(button : Button):
+	var string = button.name.left(7)
+	var n : int = int(string.right(1))
+	var mode = button.name.right(10)
+	
+	var data : Dictionary = {
+		\"APP_ID\" : app_id_input.text,
+		\"details\": details_input.text,
+		\"state\": state_input.text,
+		\"large_image\": large_image_input.text,
+		\"large_image_text\": large_image_text_input.text,
+		\"small_image_text\": small_image_text_input.text,
+		\"small_image\": small_image_input.text,
+		\"start_timestamp\": elapsed_time_input.text,
+		\"end_timestamp\": remaining_time_input.text,
+		\"auto_time\": time_check_box.button_pressed,
+	}
+	
+	if mode == \"SaveButton\":
+		_save_node.SaveData(data, n)
+		label.text = \"Preset Saved!\"
+		
+	if mode == \"LoadButton\":
+		var new_data : Dictionary = _save_node.LoadData(n)
+		
+		if !new_data.is_empty():
+			app_id_input.text = new_data[\"APP_ID\"]
+			details_input.text = new_data[\"details\"]
+			state_input.text = new_data[\"state\"]
+			large_image_input.text = new_data[\"large_image\"]
+			large_image_text_input.text = new_data[\"large_image_text\"]
+			small_image_text_input.text = new_data[\"small_image_text\"]
+			small_image_input.text = new_data[\"small_image\"]
+			elapsed_time_input.text = new_data[\"start_timestamp\"]
+			remaining_time_input.text = new_data[\"end_timestamp\"]
+			if new_data.has(\"auto_time\"): time_check_box.button_pressed = new_data[\"auto_time\"]
+			
+			label.text = \"Preset Loaded!\"
+		else:
+			label.text = \"No Data Found\"
+"
+
+[node name="CanvasLayer" type="CanvasLayer"]
+script = ExtResource("1_wofm6")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_right = 641.0
+offset_bottom = 640.0
+color = Color(0.203922, 0.203922, 0.203922, 1)
+
+[node name="Icon" type="Sprite2D" parent="."]
+position = Vector2(320, 573)
+scale = Vector2(0.207, 0.207)
+texture = ExtResource("2_10n78")
+hframes = 3
+
+[node name="Button" type="Button" parent="Icon"]
+offset_left = -198.0
+offset_top = -198.0
+offset_right = 198.0
+offset_bottom = 198.0
+theme = SubResource("Theme_y43m7")
+
+[node name="StartButton" type="Button" parent="."]
+offset_left = 507.0
+offset_top = 25.0
+offset_right = 615.0
+offset_bottom = 107.0
+text = "Start"
+
+[node name="AppIDLabel" type="Label" parent="."]
+offset_left = 25.0
+offset_top = 25.0
+offset_right = 132.0
+offset_bottom = 48.0
+text = "Aplication ID: "
+
+[node name="AppIDInput" type="LineEdit" parent="."]
+offset_left = 136.0
+offset_top = 21.0
+offset_right = 466.0
+offset_bottom = 52.0
+
+[node name="DetailsLabel" type="Label" parent="."]
+offset_left = 25.0
+offset_top = 61.0
+offset_right = 132.0
+offset_bottom = 84.0
+text = "Details:"
+vertical_alignment = 1
+
+[node name="DetailsInput" type="TextEdit" parent="."]
+offset_left = 136.0
+offset_top = 60.0
+offset_right = 466.0
+offset_bottom = 161.0
+wrap_mode = 1
+
+[node name="StateLabel" type="Label" parent="."]
+offset_left = 25.0
+offset_top = 169.0
+offset_right = 132.0
+offset_bottom = 192.0
+text = "State:"
+vertical_alignment = 1
+
+[node name="StateInput" type="LineEdit" parent="."]
+offset_left = 136.0
+offset_top = 168.0
+offset_right = 466.0
+offset_bottom = 199.0
+
+[node name="LargeImageLabel" type="Label" parent="."]
+offset_left = 25.0
+offset_top = 207.0
+offset_right = 132.0
+offset_bottom = 230.0
+text = "Large Image:"
+vertical_alignment = 1
+
+[node name="LargeImageInput" type="LineEdit" parent="."]
+offset_left = 136.0
+offset_top = 206.0
+offset_right = 466.0
+offset_bottom = 237.0
+
+[node name="LargeImageTextLabel" type="Label" parent="."]
+offset_left = 25.0
+offset_top = 245.0
+offset_right = 132.0
+offset_bottom = 268.0
+text = "Large Image 
+Text:"
+vertical_alignment = 1
+
+[node name="LargeImageTextInput" type="LineEdit" parent="."]
+offset_left = 136.0
+offset_top = 244.0
+offset_right = 466.0
+offset_bottom = 295.0
+
+[node name="SmallImageLabel" type="Label" parent="."]
+offset_left = 25.0
+offset_top = 302.0
+offset_right = 132.0
+offset_bottom = 325.0
+text = "Small Image:"
+vertical_alignment = 1
+
+[node name="SmallImageInput" type="LineEdit" parent="."]
+offset_left = 136.0
+offset_top = 301.0
+offset_right = 466.0
+offset_bottom = 332.0
+
+[node name="SmallImageTextLabel" type="Label" parent="."]
+offset_left = 25.0
+offset_top = 340.0
+offset_right = 132.0
+offset_bottom = 389.0
+text = "Small Image 
+Text:"
+vertical_alignment = 1
+
+[node name="SmallImageTextInput" type="LineEdit" parent="."]
+offset_left = 136.0
+offset_top = 339.0
+offset_right = 466.0
+offset_bottom = 390.0
+
+[node name="RemainingTimeLabel" type="Label" parent="."]
+offset_left = 25.0
+offset_top = 397.0
+offset_right = 132.0
+offset_bottom = 446.0
+text = "Remaining
+Time:"
+vertical_alignment = 1
+
+[node name="RemainingTimeInput" type="LineEdit" parent="."]
+offset_left = 136.0
+offset_top = 396.0
+offset_right = 320.0
+offset_bottom = 446.0
+
+[node name="ElapsedTimeLabel" type="Label" parent="."]
+offset_left = 25.0
+offset_top = 455.0
+offset_right = 132.0
+offset_bottom = 504.0
+text = "Elapsed
+Time:"
+vertical_alignment = 1
+
+[node name="ElapsedTimeInput" type="LineEdit" parent="."]
+offset_left = 136.0
+offset_top = 454.0
+offset_right = 320.0
+offset_bottom = 504.0
+
+[node name="TimeCheckBox" type="CheckBox" parent="."]
+offset_left = 325.0
+offset_top = 434.0
+offset_right = 390.0
+offset_bottom = 465.0
+text = "Auto
+"
+
+[node name="AcceptDialog" type="AcceptDialog" parent="."]
+initial_position = 1
+size = Vector2i(282, 100)
+dialog_text = "The Aplication ID cannot be empty"
+
+[node name="DiscordPortalLinkButton" type="LinkButton" parent="."]
+offset_left = 8.0
+offset_top = 607.0
+offset_right = 185.0
+offset_bottom = 647.0
+text = "Discord Develop Portal"
+uri = "https://discord.com/developers/applications"
+
+[node name="AplicationLinkButton" type="LinkButton" parent="."]
+offset_left = 471.0
+offset_top = 21.0
+offset_right = 511.0
+offset_bottom = 61.0
+text = "<"
+
+[node name="Preset1Label" type="Label" parent="."]
+offset_left = 511.0
+offset_top = 126.0
+offset_right = 559.0
+offset_bottom = 143.0
+theme_override_font_sizes/font_size = 12
+text = "Preset1:"
+
+[node name="Preset2Label" type="Label" parent="."]
+offset_left = 511.0
+offset_top = 191.0
+offset_right = 559.0
+offset_bottom = 208.0
+theme_override_font_sizes/font_size = 12
+text = "Preset2:"
+
+[node name="Preset3Label" type="Label" parent="."]
+offset_left = 511.0
+offset_top = 259.0
+offset_right = 559.0
+offset_bottom = 276.0
+theme_override_font_sizes/font_size = 12
+text = "Preset3:"
+
+[node name="Preset4Label" type="Label" parent="."]
+offset_left = 511.0
+offset_top = 329.0
+offset_right = 559.0
+offset_bottom = 346.0
+theme_override_font_sizes/font_size = 12
+text = "Preset4:"
+
+[node name="Preset5Label" type="Label" parent="."]
+offset_left = 511.0
+offset_top = 397.0
+offset_right = 559.0
+offset_bottom = 414.0
+theme_override_font_sizes/font_size = 12
+text = "Preset5:"
+
+[node name="PresetButtons" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = SubResource("GDScript_uane3")
+
+[node name="Preset1LoadButton" type="Button" parent="PresetButtons"]
+layout_mode = 0
+offset_left = 562.0
+offset_top = 146.0
+offset_right = 614.0
+offset_bottom = 187.0
+theme_override_font_sizes/font_size = 12
+text = "Load"
+
+[node name="Preset1SaveButton" type="Button" parent="PresetButtons"]
+layout_mode = 0
+offset_left = 507.0
+offset_top = 146.0
+offset_right = 559.0
+offset_bottom = 187.0
+theme_override_font_sizes/font_size = 12
+text = "Save"
+
+[node name="Preset2LoadButton" type="Button" parent="PresetButtons"]
+layout_mode = 0
+offset_left = 562.0
+offset_top = 211.0
+offset_right = 614.0
+offset_bottom = 252.0
+theme_override_font_sizes/font_size = 12
+text = "Load"
+
+[node name="Preset2SaveButton" type="Button" parent="PresetButtons"]
+layout_mode = 0
+offset_left = 507.0
+offset_top = 211.0
+offset_right = 559.0
+offset_bottom = 252.0
+theme_override_font_sizes/font_size = 12
+text = "Save"
+
+[node name="Preset3LoadButton" type="Button" parent="PresetButtons"]
+layout_mode = 0
+offset_left = 562.0
+offset_top = 279.0
+offset_right = 614.0
+offset_bottom = 320.0
+theme_override_font_sizes/font_size = 12
+text = "Load"
+
+[node name="Preset3SaveButton" type="Button" parent="PresetButtons"]
+layout_mode = 0
+offset_left = 507.0
+offset_top = 279.0
+offset_right = 559.0
+offset_bottom = 320.0
+theme_override_font_sizes/font_size = 12
+text = "Save"
+
+[node name="Preset4LoadButton" type="Button" parent="PresetButtons"]
+layout_mode = 0
+offset_left = 562.0
+offset_top = 349.0
+offset_right = 614.0
+offset_bottom = 390.0
+theme_override_font_sizes/font_size = 12
+text = "Load"
+
+[node name="Preset4SaveButton" type="Button" parent="PresetButtons"]
+layout_mode = 0
+offset_left = 507.0
+offset_top = 349.0
+offset_right = 559.0
+offset_bottom = 390.0
+theme_override_font_sizes/font_size = 12
+text = "Save"
+
+[node name="Preset5LoadButton" type="Button" parent="PresetButtons"]
+layout_mode = 0
+offset_left = 562.0
+offset_top = 417.0
+offset_right = 614.0
+offset_bottom = 458.0
+theme_override_font_sizes/font_size = 12
+text = "Load"
+
+[node name="Preset5SaveButton" type="Button" parent="PresetButtons"]
+layout_mode = 0
+offset_left = 507.0
+offset_top = 417.0
+offset_right = 559.0
+offset_bottom = 458.0
+theme_override_font_sizes/font_size = 12
+text = "Save"
+
+[node name="Label" type="Label" parent="."]
+offset_left = 429.0
+offset_top = 470.0
+offset_right = 702.0
+offset_bottom = 493.0
+text = "Preset Saved!"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label2" type="Label" parent="."]
+offset_left = 562.0
+offset_top = 607.0
+offset_right = 616.0
+offset_bottom = 630.0
+text = "By Alef"
+
+[connection signal="button_down" from="Icon/Button" to="." method="_on_button_button_down"]
+[connection signal="button_up" from="Icon/Button" to="." method="_on_button_button_up"]
+[connection signal="button_up" from="StartButton" to="." method="_on_start_button_button_up"]
+[connection signal="text_changed" from="RemainingTimeInput" to="." method="_on_remaining_time_input_text_changed"]
+[connection signal="text_changed" from="ElapsedTimeInput" to="." method="_on_elapsed_time_input_text_changed"]
+[connection signal="toggled" from="TimeCheckBox" to="." method="_on_time_check_box_toggled"]
+[connection signal="confirmed" from="AcceptDialog" to="." method="_on_accept_dialog_confirmed"]
